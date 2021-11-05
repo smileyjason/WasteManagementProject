@@ -19,6 +19,7 @@ import TabTwoScreen from '../screens/TabTwoScreen';
 import RecipesPageScreen from '../screens/RecipesPageScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import MenuPageScreen from '../screens/MenuPageScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -101,6 +102,14 @@ function BottomTabNavigator() {
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />
+      <BottomTab.Screen
+        name="Menu"
+        component={MenuPageScreen}
+        options={{
+          title: 'Menu',
+          tabBarIcon: ({ color }) => <TabBarIcon name='code' color={color} />,
+        }}
+        />
     </BottomTab.Navigator>
   );
 }
