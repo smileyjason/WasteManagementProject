@@ -17,6 +17,12 @@ export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Modal: undefined;
   NotFound: undefined;
+
+  TipsScreen: undefined;
+  ResourcesScreen: undefined;
+  CouponsScreen: undefined;
+  SettingsScreen: undefined;
+  HelpScreen: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<
@@ -29,6 +35,13 @@ export type RootTabParamList = {
   TabTwo: undefined;
   TabThree: undefined;
   Menu: undefined;
+  RecipesTab: undefined;
+  MoreTab: undefined;
+  TipsScreen: undefined;
+  ResourcesScreen: undefined;
+  CouponsScreen: undefined;
+  SettingsScreen: undefined;
+  HelpScreen: undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<
