@@ -14,10 +14,11 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import TabOneScreen from '../screens/TabOneScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
+import HomeScreen from '../screens/HomeScreen';
+import FridgeScreen from '../screens/FridgeScreen';
 import MoreScreen from '../screens/MoreScreen';
 import RecipesPageScreen from '../screens/RecipesPageScreen';
+import MealPlanningScreen from '../screens/MealPlanningScreen';
 
 import TipsScreen from '../screens/TipsScreen';
 import ResourcesScreen from '../screens/ResourcesScreen';
@@ -27,7 +28,8 @@ import HelpScreen from '../screens/HelpScreen';
 
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
-import MenuPageScreen from '../screens/MenuPageScreen';
+
+import HelpButton from '../components/HelpButton';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -73,52 +75,16 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="TabOne"
+      initialRouteName="HomeScreen"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
       }}>
       <BottomTab.Screen
-        name="TabOne"
-        component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-          title: 'Tab One',
+        name="HomeScreen"
+        component={HomeScreen}
+        options={() => ({
+          title: 'Home',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate('Modal')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
-        })}
-      />
-      <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
-        options={({ navigation }: RootTabScreenProps<'TabTwo'>) => ({
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate('Modal')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
         })}
       />
       <BottomTab.Screen
@@ -127,52 +93,33 @@ function BottomTabNavigator() {
         options={({ navigation }: RootTabScreenProps<'RecipesTab'>) => ({
           title: 'Recipes',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate('Modal')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
         })}
       />
+      <BottomTab.Screen
+        name="FridgeScreen"
+        component={FridgeScreen}
+        options={({ navigation }: RootTabScreenProps<'FridgeScreen'>) => ({
+          title: 'Fridge',
+          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+        })}
+      />
+      
+      <BottomTab.Screen
+        name="MealPlanningScreen"
+        component={MealPlanningScreen}
+        options={{
+          title: 'Meal Planning',
+          tabBarIcon: ({ color }) => <TabBarIcon name='code' color={color} />,
+        }}
+        />
       <BottomTab.Screen
         name="MoreTab"
         component={MoreScreen}
         options={({ navigation }: RootTabScreenProps<'MoreTab'>) => ({
           title: 'More',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate('Modal')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
         })}
       />
-      <BottomTab.Screen
-        name="Menu"
-        component={MenuPageScreen}
-        options={{
-          title: 'Menu',
-          tabBarIcon: ({ color }) => <TabBarIcon name='code' color={color} />,
-        }}
-        />
     </BottomTab.Navigator>
   );
 }
