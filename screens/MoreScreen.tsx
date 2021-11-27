@@ -8,6 +8,7 @@ export default function MoreScreen({ navigation }: RootTabScreenProps<'MoreTab'>
   return (
     <View style={styles.container}>
       <Text style={styles.title}>More</Text>
+      <Text style={styles.title}>This is the More Screen</Text>
       <Button 
         onPress = {() => navigation.navigate('TipsScreen')} 
         title = 'Sustainability Tips'
