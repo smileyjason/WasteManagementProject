@@ -30,6 +30,8 @@ import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../typ
 import LinkingConfiguration from './LinkingConfiguration';
 
 import HelpButton from '../components/HelpButton';
+import SearchRecipesScreen from '../screens/SearchRecipesScreen';
+import RecipeScreen from '../screens/RecipeScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -57,6 +59,8 @@ function RootNavigator() {
       <Stack.Screen name="SettingsScreen" component={SettingsScreen}/>
       <Stack.Screen name="HelpScreen" component={HelpScreen}/>
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+      <Stack.Screen name="SearchRecipesScreen" component={SearchRecipesScreen}/>
+      <Stack.Screen name="RecipeScreen" component={RecipeScreen}/>
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
