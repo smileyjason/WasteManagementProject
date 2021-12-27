@@ -10,6 +10,9 @@ export default StyleSheet.create({
       fontSize: 20,
       fontWeight: 'bold',
     },
+    subtitle: {
+      fontSize: 16,
+    },
     separator: {
       marginVertical: 30,
       height: 1,

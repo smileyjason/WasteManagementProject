@@ -1,18 +1,31 @@
 import * as React from 'react';
 import styles from '../styles/ScreenStyles';
 
-import { Text, View } from '../components/Themed';
+import { View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
 
-import { Card, ListItem, Icon } from 'react-native-elements';
-import { List, Searchbar, Subheading, Headline, Button } from 'react-native-paper';
+//import { Card, ListItem, Icon } from 'react-native-elements';
+import { Searchbar, Button } from 'react-native-paper';
 import { ScrollView } from 'react-native';
-import { IconButton, Colors } from 'react-native-paper';
-import { Dialog, Portal, Paragraph } from 'react-native-paper';
+import ScreenTitle from '../components/ScreenTitle';
+import { StyleSheet } from 'react-native';
+
+import { Card, Divider } from 'react-native-paper';
+
+const recipeStyles = StyleSheet.create({
+  card: {
+    width: "80%", 
+    backgroundColor: '#C4C4C4',
+    marginBottom: '15px'
+  },
+  list: {
+    backgroundColor: '#C4C4C4',
+    marginTop: '5px',
+  }
+});
 
 export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'RecipesTab'>) {
   const [search, setSearch] = React.useState("");
-  const [help, setHelp] = React.useState(false);
 
   const onChangeSearch = (searchValue: string) => setSearch(searchValue);
 
@@ -34,64 +47,41 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
   return (
     <ScrollView>
       <View style={styles.container}>
-      <Text style={styles.title}>Recipes</Text>
-      <IconButton
-        icon="help"
-        size={20}
-        onPress={() => setHelp(true)}
-      />
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
 
-      <Portal>
-        <Dialog visible={help} onDismiss={() => setHelp(false)}>
-          <Dialog.Content>
-            <Paragraph>You can search for and keep track of recipes in the Recipes tab.</Paragraph>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setHelp(false)}>Ok</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+        {/* Title */}
+        <ScreenTitle 
+          title = "Recipes" 
+          subtitle = ""
+          helpMessage = "You can search for and keep track of recipes in the Recipes tab."/>
 
-        <Card containerStyle={{
-          width: "80%", backgroundColor: '#C4C4C4'
-        }}>
-          <Card.Title>
-            My Daily Menu
-            
-          </Card.Title>
-          <Card.FeaturedSubtitle>
-            Based on the items in your fridge
-          </Card.FeaturedSubtitle>
-          <Card.Divider/>
-
+      {/* Daily Menu Card */}
+      <Card style={recipeStyles.card}>
+        <Card.Title
+          title="My Daily Menu"
+          subtitle="Based on the items in your fridge"
+        />
+        <Divider />
+        <Card.Content>
           {
             list.map((l, i) => (
-              <ListItem key={i} bottomDivider>
-                <ListItem.Content>
-                  <Button mode="text" uppercase={false} onPress={() => navigation.navigate('RecipeScreen')}>
+              <View style={recipeStyles.list}>
+                <Button mode="text" uppercase={false} onPress={() => navigation.navigate('RecipeScreen')}>
                     {l.label}
-                  </Button>
-                </ListItem.Content>
-              </ListItem>
+                </Button>
+                <Divider />
+              </View>
             ))
           }
-
-        <Button
-          onPress={() => navigation.navigate('MealPlanningScreen')}
-          mode="text"
-          uppercase={false}
-        >
-          Go to meal planning
-        </Button>
+        </Card.Content>
       </Card>
 
-      <Card containerStyle={{
-          width: "80%", backgroundColor: '#C4C4C4'
-        }}>
-          <Card.Title>Search Our Cookbook</Card.Title>
-          <Card.Divider/>
-
+      {/* Search Our Cookbook Card */}
+      <Card style={recipeStyles.card}>
+        <Card.Title
+          title="Search Our Cookbook"
+        />
+        <Divider />
+        <Card.Content>
           <Searchbar
             placeholder="Search"
             autoComplete={false}
@@ -99,29 +89,34 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
             value={search}
           />
 
-        <Button
-          onPress={() => navigation.navigate('SearchRecipesScreen')}
-          mode="text"
-          uppercase={false}
-        >
-          Search using filters
-        </Button>
+          <Button
+            onPress={() => navigation.navigate('SearchRecipesScreen')}
+            mode="text"
+            uppercase={false}
+          >
+            Search using filters
+          </Button>
+        </Card.Content>
       </Card>
 
-      <Card containerStyle={{
-          width: "80%", backgroundColor: '#C4C4C4'
-        }}>
-          <Card.Title>Bookmarks</Card.Title>
-          <Card.Divider/>
-
+      {/* Bookmarks Card */}
+      <Card style={recipeStyles.card}>
+        <Card.Title
+          title="Bookmarks"
+        />
+        <Divider />
+        <Card.Content>
+        </Card.Content>
       </Card>
 
-      <Card containerStyle={{
-          width: "80%", backgroundColor: '#C4C4C4'
-        }}>
-          <Card.Title>Recent</Card.Title>
-          <Card.Divider/>
-
+      {/* Recent Card */}
+      <Card style={recipeStyles.card}>
+        <Card.Title
+          title="Recent"
+        />
+        <Divider />
+        <Card.Content>
+        </Card.Content>
       </Card>
       </View>
     </ScrollView>

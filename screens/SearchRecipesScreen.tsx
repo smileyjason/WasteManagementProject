@@ -37,6 +37,7 @@ export default function SearchRecipesScreen({ navigation }: RootTabScreenProps<'
                 ingredients.map((item, index) => {
                   return (
                     <Checkbox.Item
+                      key={item}
                       label={item}
                       position="leading"
                       status={checked[index] ? 'checked' : 'unchecked'}
