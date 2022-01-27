@@ -23,6 +23,8 @@ export type RootStackParamList = {
   CouponsScreen: undefined;
   SettingsScreen: undefined;
   HelpScreen: undefined;
+  SearchRecipesScreen: undefined;
+  RecipeScreen: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<
@@ -43,6 +45,8 @@ export type RootTabParamList = {
   SettingsScreen: undefined;
   HelpScreen: undefined;
   HomeTabScreen: undefined;
+  SearchRecipesScreen: undefined;
+  RecipeScreen: undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<

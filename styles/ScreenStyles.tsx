@@ -10,12 +10,15 @@ export default StyleSheet.create({
       fontSize: 20,
       fontWeight: 'bold',
     },
-    description: {
+    subtitle: {
+      fontSize: 16,
+    },
+      description: {
       fontSize: 14,
     },
     separator: {
       marginVertical: 30,
       height: 1,
       width: '80%',
-    },
+    }
   });
