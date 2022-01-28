@@ -89,6 +89,7 @@ function BottomTabNavigator() {
         options={() => ({
           title: 'Home',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerShown: false
         })}
       />
       <BottomTab.Screen
@@ -97,6 +98,7 @@ function BottomTabNavigator() {
         options={({ navigation }: RootTabScreenProps<'RecipesTab'>) => ({
           title: 'Recipes',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerShown: false
         })}
       />
       <BottomTab.Screen
@@ -105,6 +107,7 @@ function BottomTabNavigator() {
         options={({ navigation }: RootTabScreenProps<'FridgeScreen'>) => ({
           title: 'Fridge',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerShown: false
         })}
       />
       
@@ -114,6 +117,7 @@ function BottomTabNavigator() {
         options={{
           title: 'Meal Planning',
           tabBarIcon: ({ color }) => <TabBarIcon name='code' color={color} />,
+          headerShown: false
         }}
         />
       <BottomTab.Screen
@@ -122,6 +126,7 @@ function BottomTabNavigator() {
         options={({ navigation }: RootTabScreenProps<'MoreTab'>) => ({
           title: 'More',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerShown: false
         })}
       />
     </BottomTab.Navigator>

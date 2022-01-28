@@ -4,7 +4,6 @@ import styles from '../styles/ScreenStyles';
 import { View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
 
-//import { Card, ListItem, Icon } from 'react-native-elements';
 import { Searchbar, Button } from 'react-native-paper';
 import { ScrollView } from 'react-native';
 import ScreenTitle from '../components/ScreenTitle';
@@ -21,6 +20,9 @@ const recipeStyles = StyleSheet.create({
   list: {
     backgroundColor: '#C4C4C4',
     marginTop: '5px',
+  },
+  buttonlabel: {
+    color: '#006400'
   }
 });
 
@@ -65,7 +67,11 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
           {
             list.map((l, i) => (
               <View style={recipeStyles.list}>
-                <Button mode="text" uppercase={false} onPress={() => navigation.navigate('RecipeScreen')}>
+                <Button 
+                  mode="text" 
+                  uppercase={false} 
+                  onPress={() => navigation.navigate('RecipeScreen')} 
+                  labelStyle = {recipeStyles.buttonlabel}>
                     {l.label}
                 </Button>
                 <Divider />
@@ -93,6 +99,7 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
             onPress={() => navigation.navigate('SearchRecipesScreen')}
             mode="text"
             uppercase={false}
+            labelStyle = {recipeStyles.buttonlabel}
           >
             Search using filters
           </Button>
