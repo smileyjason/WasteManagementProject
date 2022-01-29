@@ -30,11 +30,25 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
   const hideModalFridge = () => setVisibleFridge(false);
   const hideModalGrocery = () => setVisibleGrocery(false);
 
-  const [text, setText] = React.useState("");
+  const [name, setName] = React.useState("");
+  const [date, setDate] = React.useState("");
   const containerStyle = {alignItems: 'center'};
 
-  const addIngredientFridge = () => null; {/* modify list */}
-  const addIngredientGrocery = () => null; {/* modify list */}
+
+  function addIngredientFridge() {
+    const IngredientData = {
+      name: name,
+      date: date
+    }
+    console.log(IngredientData); {/* modify list and add to database*/}
+  }
+
+  function addIngredientGrocery() {
+    const GroceryData = {
+      name: name,
+    }
+    console.log(GroceryData); {/* modify list and add to database*/}
+  }
 
   return (
     <ScrollView>
@@ -48,13 +62,13 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
             <Divider />
             <TextInput
               label="Ingredient"
-              value={text}
-              onChangeText={text => setText(text)}
+              value={name}
+              onChangeText={name => setName(name)}
             />
             <TextInput
               label="Date (dd/mm/yyyy)"
-              value={text}
-              onChangeText={text => setText(text)}
+              value={date}
+              onChangeText={date => setDate(date)}
             />
             <Button icon="plus" mode="contained" onPress={addIngredientFridge} color = '#90EE90'>
             Add Ingredient to Fridge
@@ -70,8 +84,8 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
             <Divider />
             <TextInput
               label="Ingredient"
-              value={text}
-              onChangeText={text => setText(text)}
+              value={name}
+              onChangeText={name => setName(name)}
             />
             <Button icon="plus" mode="contained" onPress={addIngredientGrocery} color = '#90EE90'>
             Add Ingredient to Grocery List
