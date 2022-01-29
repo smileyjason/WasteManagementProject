@@ -6,10 +6,12 @@ import { RootTabScreenProps } from '../types';
 
 import { Card, ListItem, Icon } from 'react-native-elements';
 import { List, Searchbar, Subheading, Headline, Button } from 'react-native-paper';
+import { getData } from '../hooks/getRecipes';
 
 
 export default function RecipeScreen({ navigation }: RootTabScreenProps<'RecipeScreen'>) {
 
+  getData();
   //In the RecipesPageScreen, you just retrieve the titles of the recipe and send that to this when it is clicked on
   //Then in here, you retrieve all the recipe info from the database
   return (
