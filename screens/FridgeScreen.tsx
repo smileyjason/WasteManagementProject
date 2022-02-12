@@ -1,8 +1,7 @@
 import * as React from 'react';
 import styles from '../styles/ScreenStyles';
 import { DataTable } from 'react-native-paper';
-import { Card, Divider } from 'react-native-paper';
-import { Button } from 'react-native-paper';
+import { Modal, Portal, Button, Card, Divider, TextInput } from 'react-native-paper';
 import { RootTabScreenProps } from '../types';
 import { ScrollView } from 'react-native';
 
@@ -23,12 +22,77 @@ const fridgeStyles = StyleSheet.create({
 });
 
 export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeScreen'>) {
-  const AddIngredient = () => {
+  const [visibleFridge, setVisibleFridge] = React.useState(false);
+  const [visibleGrocery, setVisibleGrocery] = React.useState(false);
 
+  const showModalFridge = () => setVisibleFridge(true);
+  const showModalGrocery = () => setVisibleGrocery(true);
+  const hideModalFridge = () => setVisibleFridge(false);
+  const hideModalGrocery = () => setVisibleGrocery(false);
+
+  const [name, setName] = React.useState("");
+  const [date, setDate] = React.useState("");
+  const containerStyle = {alignItems: 'center'};
+
+
+  function addIngredientFridge() {
+    const IngredientData = {
+      name: name,
+      date: date
+    }
+    console.log(IngredientData); {/* modify list and add to database*/}
   }
-  
+
+  function addIngredientGrocery() {
+    const GroceryData = {
+      name: name,
+    }
+    console.log(GroceryData); {/* modify list and add to database*/}
+  }
+
   return (
     <ScrollView>
+      <Portal>
+        <Modal visible={visibleFridge} onDismiss={hideModalFridge} contentContainerStyle={containerStyle}>
+          <Card style={fridgeStyles.card}>
+            <Card.Title
+              title="Add an Ingredient to Your Fridge"
+              subtitle=""
+            />
+            <Divider />
+            <TextInput
+              label="Ingredient"
+              value={name}
+              onChangeText={name => setName(name)}
+            />
+            <TextInput
+              label="Date (dd/mm/yyyy)"
+              value={date}
+              onChangeText={date => setDate(date)}
+            />
+            <Button icon="plus" mode="contained" onPress={addIngredientFridge} color = '#90EE90'>
+            Add Ingredient to Fridge
+            </Button>
+          </Card>
+        </Modal>
+        <Modal visible={visibleGrocery} onDismiss={hideModalGrocery} contentContainerStyle={containerStyle}>
+          <Card style={fridgeStyles.card}>
+            <Card.Title
+              title="Add an Ingredient to Your Grocery List"
+              subtitle=""
+            />
+            <Divider />
+            <TextInput
+              label="Ingredient"
+              value={name}
+              onChangeText={name => setName(name)}
+            />
+            <Button icon="plus" mode="contained" onPress={addIngredientGrocery} color = '#90EE90'>
+            Add Ingredient to Grocery List
+            </Button>
+          </Card>
+        </Modal>
+      </Portal>
       <View style={styles.container}>
         
         {/* Title */}
@@ -64,7 +128,7 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
               </DataTable.Row>
             </DataTable>
 
-            <Button icon="plus" mode="contained" onPress={AddIngredient} color = '#90EE90'>
+            <Button icon="plus" mode="contained" onPress={showModalFridge} color = '#90EE90'>
             Add Ingredient
             </Button>
 
@@ -97,7 +161,7 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
               </DataTable.Row>
             </DataTable>
 
-            <Button icon="plus" mode="contained" onPress={AddIngredient} color = '#90EE90'>
+            <Button icon="plus" mode="contained" onPress={showModalGrocery} color = '#90EE90'>
             Add to Grocery List
             </Button>
 
