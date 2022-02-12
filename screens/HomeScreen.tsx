@@ -15,11 +15,11 @@ const homeStyles = StyleSheet.create({
   card: {
     width: "80%", 
     backgroundColor: '#90EE90',
-    marginBottom: '15px'
+    marginBottom: 15
   },
   list: {
     backgroundColor: '#C4C4C4',
-    marginTop: '5px',
+    marginTop: 5,
   },
   buttonlabel: {
     color: '#000000'

@@ -8,16 +8,18 @@ import { ScrollView } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { StyleSheet } from 'react-native';
 import ScreenTitle from '../components/ScreenTitle';
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { app, db } from '../firebase';
 
 const fridgeStyles = StyleSheet.create({
   card: {
     width: "80%", 
     backgroundColor: '#C4C4C4',
-    marginBottom: '15px'
+    marginBottom: 15
   },
   list: {
     backgroundColor: '#C4C4C4',
-    marginTop: '5px',
+    marginTop: 5,
   }
 });
 
@@ -50,6 +52,54 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
     console.log(GroceryData); {/* modify list and add to database*/}
   }
 
+  const [fridge, setFridge] = React.useState<{id: string, label: string, amount: string}[]>();
+
+  React.useEffect(() => {
+    (async () => {
+
+      let temp: {id: string, label: string, amount: string}[] = [];
+
+      const querySnapshot = await getDocs(collection(db, "fridge ingredients"));
+      querySnapshot.forEach((doc) => {
+        console.log(`${doc.id} => ${doc.data()}`);
+        temp.push({id: doc.id, label: doc.data().name, amount: doc.data().amount});
+      });
+
+      setFridge(temp);
+
+    })()
+  
+      return () => {
+         // 👍 
+      }
+    }, [])
+
+    console.log(fridge);
+
+  const [groceries, setGroceries] = React.useState<{id: string, label: string, amount: string}[]>();
+
+  React.useEffect(() => {
+    (async () => {
+
+      let temp: {id: string, label: string, amount: string}[] = [];
+
+      const querySnapshot = await getDocs(collection(db, "groceries"));
+      querySnapshot.forEach((doc) => {
+        console.log(`${doc.id} => ${doc.data()}`);
+        temp.push({id: doc.id, label: doc.data().name, amount: doc.data().amount});
+      });
+
+      setGroceries(temp);
+
+    })()
+  
+      return () => {
+         // 👍 
+      }
+    }, [])
+
+    console.log(groceries);
+  
   return (
     <ScrollView>
       <Portal>
@@ -110,26 +160,25 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
           <Divider />
 
           <Card.Content>
-            {/*Need to implement DataTable in a way that's not hard-coded*/}
             <DataTable>
               <DataTable.Header>
-                <DataTable.Title>Ingredient</DataTable.Title>
-                <DataTable.Title numeric>Days in Fridge</DataTable.Title>
+                <DataTable.Title>Fridge</DataTable.Title>
+                <DataTable.Title numeric>Amount</DataTable.Title>
               </DataTable.Header>
-
-              <DataTable.Row>
-                <DataTable.Cell>Frozen yogurt</DataTable.Cell>
-                <DataTable.Cell numeric>159</DataTable.Cell>
-              </DataTable.Row>
-
-              <DataTable.Row>
-                <DataTable.Cell>Ice cream sandwich</DataTable.Cell>
-                <DataTable.Cell numeric>237</DataTable.Cell>
-              </DataTable.Row>
+          {
+              fridge?.map((l, i) => (
+                <View style={fridgeStyles.list}>
+                  <DataTable.Row>
+                    <DataTable.Cell>{l.label}</DataTable.Cell>
+                    <DataTable.Cell numeric>{l.amount}</DataTable.Cell>
+                  </DataTable.Row>
+                  <Divider />
+                </View>
+              ))
+          }
             </DataTable>
-
             <Button icon="plus" mode="contained" onPress={showModalFridge} color = '#90EE90'>
-            Add Ingredient
+            Add to Fridge
             </Button>
 
           </Card.Content>
@@ -146,19 +195,20 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
             {/*Need to implement DataTable in a way that's not hard-coded*/}
             <DataTable>
               <DataTable.Header>
-                <DataTable.Title>Grocery List</DataTable.Title>
+                <DataTable.Title>Groceries</DataTable.Title>
                 <DataTable.Title numeric>Amount</DataTable.Title>
               </DataTable.Header>
-
-              <DataTable.Row>
-                <DataTable.Cell>Frozen yogurt</DataTable.Cell>
-                <DataTable.Cell numeric>159</DataTable.Cell>
-              </DataTable.Row>
-
-              <DataTable.Row>
-                <DataTable.Cell>Ice cream sandwich</DataTable.Cell>
-                <DataTable.Cell numeric>237</DataTable.Cell>
-              </DataTable.Row>
+          {
+              groceries?.map((l, i) => (
+                <View style={fridgeStyles.list}>
+                  <DataTable.Row>
+                    <DataTable.Cell>{l.label}</DataTable.Cell>
+                    <DataTable.Cell numeric>{l.amount}</DataTable.Cell>
+                  </DataTable.Row>
+                  <Divider />
+                </View>
+              ))
+          }
             </DataTable>
 
             <Button icon="plus" mode="contained" onPress={showModalGrocery} color = '#90EE90'>
