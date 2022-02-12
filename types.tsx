@@ -24,7 +24,7 @@ export type RootStackParamList = {
   SettingsScreen: undefined;
   HelpScreen: undefined;
   SearchRecipesScreen: undefined;
-  RecipeScreen: undefined;
+  RecipeScreen: {id: string};
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<
@@ -46,7 +46,7 @@ export type RootTabParamList = {
   HelpScreen: undefined;
   HomeTabScreen: undefined;
   SearchRecipesScreen: undefined;
-  RecipeScreen: undefined;
+  RecipeScreen: {id: string};
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<

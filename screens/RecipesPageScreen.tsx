@@ -10,6 +10,9 @@ import ScreenTitle from '../components/ScreenTitle';
 import { StyleSheet } from 'react-native';
 
 import { Card, Divider } from 'react-native-paper';
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { app, db } from '../firebase';
+import { getAllRecipes } from '../hooks/getRecipes';
 
 const recipeStyles = StyleSheet.create({
   card: {
@@ -46,6 +49,30 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
     },
   ];
 
+  const [documents, setDocuments] = React.useState<{id: string, label: string}[]>();
+
+  React.useEffect(() => {
+    (async () => {
+
+      let temp: {id: string, label: string}[] = [];
+
+      const querySnapshot = await getDocs(collection(db, "recipes"));
+      querySnapshot.forEach((doc) => {
+        console.log(`${doc.id} => ${doc.data()}`);
+        temp.push({id: doc.id, label: doc.data().title});
+      });
+
+      setDocuments(temp);
+
+    })()
+  
+      return () => {
+         // 👍 
+      }
+    }, [])
+
+    console.log(documents);
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -65,18 +92,18 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
         <Divider />
         <Card.Content>
           {
-            list.map((l, i) => (
-              <View style={recipeStyles.list}>
-                <Button 
-                  mode="text" 
-                  uppercase={false} 
-                  onPress={() => navigation.navigate('RecipeScreen')} 
-                  labelStyle = {recipeStyles.buttonlabel}>
-                    {l.label}
-                </Button>
-                <Divider />
-              </View>
-            ))
+              documents?.map((l, i) => (
+                <View style={recipeStyles.list}>
+                  <Button 
+                    mode="text" 
+                    uppercase={false} 
+                    onPress={() => navigation.navigate('RecipeScreen', {id: l.id as string})} 
+                    labelStyle = {recipeStyles.buttonlabel}>
+                      {l.label}
+                  </Button>
+                  <Divider />
+                </View>
+              ))
           }
         </Card.Content>
       </Card>
