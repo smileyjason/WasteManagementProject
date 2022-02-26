@@ -14,11 +14,11 @@ const mealStyles = StyleSheet.create({
   card: {
     width: "80%", 
     backgroundColor: '#C4C4C4',
-    marginBottom: '15px'
+    marginBottom: 15
   },
   list: {
     backgroundColor: '#C4C4C4',
-    marginTop: '5px',
+    marginTop: 5,
   },
   buttonlabel: {
     color: '#000000'
@@ -40,7 +40,7 @@ export default function MealPlanningScreen({ navigation }: RootTabScreenProps<'M
       label: 'Dinner Recipe'
     },
   ];
-  
+
   
   return (
     <ScrollView>

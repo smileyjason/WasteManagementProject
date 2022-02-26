@@ -6,9 +6,21 @@ export default StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
     },
+    container_left: {
+      flex: 1,
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
+      marginLeft: 10,
+    },
     title: {
       fontSize: 20,
       fontWeight: 'bold',
+    },
+    left_title:
+    {
+      fontSize: 20,
+      fontWeight: 'bold',
+      textAlign: 'left',
     },
     subtitle: {
       fontSize: 16,
