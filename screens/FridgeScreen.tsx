@@ -8,7 +8,7 @@ import { ScrollView } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { StyleSheet } from 'react-native';
 import ScreenTitle from '../components/ScreenTitle';
-import { collection, doc, getDoc, getDocs, setDoc, addDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc, addDoc, deleteDoc } from "firebase/firestore";
 import { app, db } from '../firebase';
 
 const fridgeStyles = StyleSheet.create({
@@ -35,6 +35,8 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
   const [name, setName] = React.useState("");
   const [date, setDate] = React.useState("");
   const [amount, setAmount] = React.useState("");
+  const [newInFridge, setNewInFridge] = React.useState(0);
+  const [newInGrocery, setNewInGrocery] = React.useState(0);
   const containerStyle = { alignItems: 'center' };
 
 
@@ -50,6 +52,7 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
       date: date,
       amount: amount
     });
+    setNewInFridge(newInFridge + 1);
     {/* modify list and add to database*/ }
   }
 
@@ -60,7 +63,13 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
       amount: amount
     }
     console.log(GroceryData); {/* modify list and add to database*/ }
+    addDoc(collection(db, "groceries"), {
+      name: name,
+      amount: amount
+    });
+    setNewInGrocery(newInGrocery + 1);
   }
+
 
   const [fridge, setFridge] = React.useState<{ id: string, label: string, amount: string }[]>();
 
@@ -82,7 +91,7 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
     return () => {
       // 👍 
     }
-  }, [])
+  }, [newInFridge])
 
   console.log(fridge);
 
@@ -106,7 +115,7 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
     return () => {
       // 👍 
     }
-  }, [])
+  }, [newInGrocery])
 
   console.log(groceries);
 
@@ -155,7 +164,7 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
             <TextInput
               label="Amount"
               value={amount}
-              onChangeText={amount => setName(amount)}
+              onChangeText={amount => setAmount(amount)}
             />
             <Button icon="plus" mode="contained" onPress={addIngredientGrocery} color='#90EE90'>
               Add Ingredient to Grocery List
