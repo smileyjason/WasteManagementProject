@@ -45,11 +45,6 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
       amount: amount
     }
     console.log(IngredientData);
-    setDoc(doc(db, "fridge ingredients", "new-id"), {
-      name: name,
-      date: date,
-      amount: amount
-    })
     addDoc(collection(db, "fridge ingredients"), {
       name: name,
       date: date,
@@ -57,6 +52,7 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
     });
     {/* modify list and add to database*/ }
   }
+
 
   function addIngredientGrocery() {
     const GroceryData = {
