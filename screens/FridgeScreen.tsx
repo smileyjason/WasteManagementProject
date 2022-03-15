@@ -8,12 +8,12 @@ import { ScrollView } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { StyleSheet } from 'react-native';
 import ScreenTitle from '../components/ScreenTitle';
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc, addDoc, deleteDoc } from "firebase/firestore";
 import { app, db } from '../firebase';
 
 const fridgeStyles = StyleSheet.create({
   card: {
-    width: "80%", 
+    width: "80%",
     backgroundColor: '#C4C4C4',
     marginBottom: 15
   },
@@ -34,72 +34,91 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
 
   const [name, setName] = React.useState("");
   const [date, setDate] = React.useState("");
-  const containerStyle = {alignItems: 'center'};
+  const [amount, setAmount] = React.useState("");
+  const [newInFridge, setNewInFridge] = React.useState(0);
+  const [newInGrocery, setNewInGrocery] = React.useState(0);
+  const containerStyle = { alignItems: 'center' };
 
 
   function addIngredientFridge() {
     const IngredientData = {
       name: name,
-      date: date
+      date: date,
+      amount: amount
     }
-    console.log(IngredientData); {/* modify list and add to database*/}
+    console.log(IngredientData);
+    addDoc(collection(db, "fridge ingredients"), {
+      name: name,
+      date: date,
+      amount: amount
+    });
+    setNewInFridge(newInFridge + 1);
+    {/* modify list and add to database*/ }
   }
+
 
   function addIngredientGrocery() {
     const GroceryData = {
       name: name,
+      amount: amount
     }
-    console.log(GroceryData); {/* modify list and add to database*/}
+    console.log(GroceryData); {/* modify list and add to database*/ }
+    addDoc(collection(db, "groceries"), {
+      name: name,
+      amount: amount
+    });
+    setNewInGrocery(newInGrocery + 1);
   }
 
-  const [fridge, setFridge] = React.useState<{id: string, label: string, amount: string}[]>();
+
+  const [fridge, setFridge] = React.useState<{ id: string, label: string, amount: string }[]>();
 
   React.useEffect(() => {
     (async () => {
 
-      let temp: {id: string, label: string, amount: string}[] = [];
+      let temp: { id: string, label: string, amount: string }[] = [];
 
       const querySnapshot = await getDocs(collection(db, "fridge ingredients"));
       querySnapshot.forEach((doc) => {
         console.log(`${doc.id} => ${doc.data()}`);
-        temp.push({id: doc.id, label: doc.data().name, amount: doc.data().amount});
+        temp.push({ id: doc.id, label: doc.data().name, amount: doc.data().amount });
       });
 
       setFridge(temp);
 
     })()
-  
-      return () => {
-         // 👍 
-      }
-    }, [])
 
-    console.log(fridge);
+    return () => {
+      // 👍 
+    }
+  }, [newInFridge])
 
-  const [groceries, setGroceries] = React.useState<{id: string, label: string, amount: string}[]>();
+  console.log(fridge);
+
+  const [groceries, setGroceries] = React.useState<{ id: string, label: string, amount: string }[]>();
 
   React.useEffect(() => {
     (async () => {
 
-      let temp: {id: string, label: string, amount: string}[] = [];
+      let temp: { id: string, label: string, amount: string }[] = [];
 
       const querySnapshot = await getDocs(collection(db, "groceries"));
       querySnapshot.forEach((doc) => {
         console.log(`${doc.id} => ${doc.data()}`);
-        temp.push({id: doc.id, label: doc.data().name, amount: doc.data().amount});
+        temp.push({ id: doc.id, label: doc.data().name, amount: doc.data().amount });
       });
 
       setGroceries(temp);
 
     })()
-  
-      return () => {
-         // 👍 
-      }
-    }, [])
 
-    console.log(groceries);
-  
+    return () => {
+      // 👍 
+    }
+  }, [newInGrocery])
+
+  console.log(groceries);
+
   return (
     <ScrollView>
       <Portal>
@@ -120,8 +139,13 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
               value={date}
               onChangeText={date => setDate(date)}
             />
-            <Button icon="plus" mode="contained" onPress={addIngredientFridge} color = '#90EE90'>
-            Add Ingredient to Fridge
+            <TextInput
+              label="Amount"
+              value={amount}
+              onChangeText={amount => setAmount(amount)}
+            />
+            <Button icon="plus" mode="contained" onPress={addIngredientFridge} color='#90EE90'>
+              Add Ingredient to Fridge
             </Button>
           </Card>
         </Modal>
@@ -137,19 +161,24 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
               value={name}
               onChangeText={name => setName(name)}
             />
-            <Button icon="plus" mode="contained" onPress={addIngredientGrocery} color = '#90EE90'>
-            Add Ingredient to Grocery List
+            <TextInput
+              label="Amount"
+              value={amount}
+              onChangeText={amount => setAmount(amount)}
+            />
+            <Button icon="plus" mode="contained" onPress={addIngredientGrocery} color='#90EE90'>
+              Add Ingredient to Grocery List
             </Button>
           </Card>
         </Modal>
       </Portal>
       <View style={styles.container}>
-        
+
         {/* Title */}
-        <ScreenTitle 
-          title = "Fridge" 
-          subtitle = "Add your ingredients to your virtual Fridge for menu personalization!"
-          helpMessage = "You can manage the contents of your fridge in the Fridge tab."
+        <ScreenTitle
+          title="Fridge"
+          subtitle="Add your ingredients to your virtual Fridge for menu personalization!"
+          helpMessage="You can manage the contents of your fridge in the Fridge tab."
         />
 
         <Card style={fridgeStyles.card}>
@@ -165,20 +194,20 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
                 <DataTable.Title>Fridge</DataTable.Title>
                 <DataTable.Title numeric>Amount</DataTable.Title>
               </DataTable.Header>
-          {
-              fridge?.map((l, i) => (
-                <View style={fridgeStyles.list}>
-                  <DataTable.Row>
-                    <DataTable.Cell>{l.label}</DataTable.Cell>
-                    <DataTable.Cell numeric>{l.amount}</DataTable.Cell>
-                  </DataTable.Row>
-                  <Divider />
-                </View>
-              ))
-          }
+              {
+                fridge?.map((l, i) => (
+                  <View style={fridgeStyles.list}>
+                    <DataTable.Row>
+                      <DataTable.Cell>{l.label}</DataTable.Cell>
+                      <DataTable.Cell numeric>{l.amount}</DataTable.Cell>
+                    </DataTable.Row>
+                    <Divider />
+                  </View>
+                ))
+              }
             </DataTable>
-            <Button icon="plus" mode="contained" onPress={showModalFridge} color = '#90EE90'>
-            Add to Fridge
+            <Button icon="plus" mode="contained" onPress={showModalFridge} color='#90EE90'>
+              Add to Fridge
             </Button>
 
           </Card.Content>
@@ -198,28 +227,28 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
                 <DataTable.Title>Groceries</DataTable.Title>
                 <DataTable.Title numeric>Amount</DataTable.Title>
               </DataTable.Header>
-          {
-              groceries?.map((l, i) => (
-                <View style={fridgeStyles.list}>
-                  <DataTable.Row>
-                    <DataTable.Cell>{l.label}</DataTable.Cell>
-                    <DataTable.Cell numeric>{l.amount}</DataTable.Cell>
-                  </DataTable.Row>
-                  <Divider />
-                </View>
-              ))
-          }
+              {
+                groceries?.map((l, i) => (
+                  <View style={fridgeStyles.list}>
+                    <DataTable.Row>
+                      <DataTable.Cell>{l.label}</DataTable.Cell>
+                      <DataTable.Cell numeric>{l.amount}</DataTable.Cell>
+                    </DataTable.Row>
+                    <Divider />
+                  </View>
+                ))
+              }
             </DataTable>
 
-            <Button icon="plus" mode="contained" onPress={showModalGrocery} color = '#90EE90'>
-            Add to Grocery List
+            <Button icon="plus" mode="contained" onPress={showModalGrocery} color='#90EE90'>
+              Add to Grocery List
             </Button>
 
           </Card.Content>
         </Card>
 
 
-        
+
 
       </View>
     </ScrollView>

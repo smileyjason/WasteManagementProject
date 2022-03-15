@@ -9,22 +9,8 @@ import { ScrollView } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { StyleSheet } from 'react-native';
 import ScreenTitle from '../components/ScreenTitle';
-
-
-const homeStyles = StyleSheet.create({
-  card: {
-    width: "80%", 
-    backgroundColor: '#90EE90',
-    marginBottom: 15
-  },
-  list: {
-    backgroundColor: '#C4C4C4',
-    marginTop: 5,
-  },
-  buttonlabel: {
-    color: '#000000'
-  }
-});
+import HomeStyles from '../styles/HomeStyles';
+import SustainabilityTip from '../components/SustainabilityTip';
 
 export default function HomeScreen({ navigation }: RootTabScreenProps<'HomeScreen'>) {
 
@@ -53,25 +39,9 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'HomeScree
           helpMessage = "You can keep track of your recent activity here."
         />
 
-        <Card style={homeStyles.card}>
-          <Card.Title
-            title="Did you know..."
-            subtitle="Storing greens with paper towel can help them stay fresh longer?"
-          />
+        <SustainabilityTip tip = "Storing greens with paper towel can help them last longer!"/>
 
-          <Divider />
-
-          <Card.Content>
-            <Button icon="thumb-up" mode="outlined" color = '#000000'>
-            Yes
-            </Button>
-            <Button icon="thumb-down" mode="outlined" color = '#000000'>
-            No
-            </Button>
-          </Card.Content>
-        </Card>
-
-        <Card style={homeStyles.card}>
+        <Card style={HomeStyles.card}>
           <Card.Title
             title="Meal Planning"
           />
@@ -80,12 +50,12 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'HomeScree
           <Card.Content>
             {
               list.map((l, i) => (
-                <View style={homeStyles.list}>
+                <View style={HomeStyles.list}>
                   <Button 
                     mode="text" 
                     uppercase={false} 
                     onPress={() => navigation.navigate('RecipeScreen')} 
-                    labelStyle = {homeStyles.buttonlabel}>
+                    labelStyle = {HomeStyles.buttonlabel}>
                       {l.label}
                   </Button>
                   <Divider />
@@ -95,7 +65,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'HomeScree
           </Card.Content>
         </Card>
 
-        <Card style={homeStyles.card}>
+        <Card style={HomeStyles.card}>
           <Card.Title
             title="Near Expiry Dates"
           />
