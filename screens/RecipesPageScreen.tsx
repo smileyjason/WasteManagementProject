@@ -13,6 +13,8 @@ import { Card, Divider } from 'react-native-paper';
 import { collection, doc, getDoc, getDocs, query, where, updateDoc, orderBy, limit } from "firebase/firestore";
 import { app, db } from '../firebase';
 import { getAllRecipes } from '../hooks/getRecipes';
+import { setTypesenseCollection, typesenseSearch} from '../typesense/typesense';
+import { RecipesSchema } from '../constants/Schemas';
 
 const recipeStyles = StyleSheet.create({
   card: {
@@ -41,27 +43,23 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
   const [bookmarks, setBookmarks] = React.useState<DocumentType>();
   const [recent, setRecent] = React.useState<DocumentType>();
 
-  /*async function searchTitle(term: string) {
+  const [typesense, setTypesense] = React.useState<any>(null);
 
-    // reverse term
-    const termR = term.split("").reverse().join("");
-  
-    // define queries
-    const titles = postRef.orderBy('title').startAt(term).endAt(term + '~').get();
-    const titlesR = postRef.orderBy('titleRev').startAt(termR).endAt(termR + '~').get();
-  
-    // get queries
-    const [titleSnap, titlesRSnap] = await Promise.all([
-      titles,
-      titlesR
-    ]);
-    return (titleSnap.docs).concat(titlesRSnap.docs);
-  }*/
-
-  navigation.addListener('focus', () => {
+  /*navigation.addListener('focus', () => {
     console.log("unsubscribe");
     loadData();
-  });
+  });*/
+
+  React.useEffect(() => {
+    loadTypsenseCollection();
+    const unsubscribe = navigation.addListener('focus', () => {
+      console.log("unsubscribe");
+      loadData();
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, []);
 
   async function loadData() {
     let temp: {id: string, label: string}[] = [];
@@ -101,10 +99,49 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
     setRecent(temp);
   }
 
-  React.useEffect(() => {
+  async function loadTypsenseCollection() {
+    let temp: {id: string, label: string}[] = [];
+
+    /*const querySnapshot = await getDocs(collection(db, "recipes"));
+    querySnapshot.forEach((doc) => {
+      temp.push({id: doc.id, label: doc.data().title});
+    });
+
+    setDocuments(temp);*/
+    let initialDocuments: {
+      doc_num: number,
+      document_id: string, 
+      title: string,
+      ingredients: string[],
+      instructions: string,
+    }[] = [];
+    const querySnapshot = await getDocs(collection(db, "recipes"));
+    let index = 0;
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      initialDocuments.push({ 
+        doc_num: index,
+        document_id: doc.id, 
+        title: data.title,
+        ingredients: data.ingredients,
+        instructions: data.instructions,
+      });
+      index = index = 1;
+    });
+
+
+    await setTypesenseCollection(RecipesSchema, initialDocuments)
+      .then((result) => {
+        console.log(result);
+        setTypesense(result);
+      })
+
+  }
+
+  /*React.useEffect(() => {
     (async () => {
 
-      /*let temp: {id: string, label: string}[] = [];
+      let temp: {id: string, label: string}[] = [];
 
       const querySnapshot = await getDocs(collection(db, "recipes"));
       querySnapshot.forEach((doc) => {
@@ -131,7 +168,36 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
         temp.push({id: doc.id, label: doc.data().title});
       });
 
-      setRecent(temp);*/
+      setRecent(temp);
+
+      let initialDocuments: {
+        doc_num: number,
+        document_id: string, 
+        title: string,
+        ingredients: string[],
+        instructions: string,
+      }[] = [];
+      const querySnapshot = await getDocs(collection(db, "recipes"));
+      let index = 0;
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        initialDocuments.push({ 
+          doc_num: index,
+          document_id: doc.id, 
+          title: data.title,
+          ingredients: data.ingredients,
+          instructions: data.instructions,
+        });
+        index = index = 1;
+      });
+
+
+      await setTypesenseCollection(RecipesSchema, initialDocuments)
+        .then((result) => {
+          console.log(result);
+          setTypesense(result);
+        })
+      
       
 
     })()
@@ -139,7 +205,7 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
       return () => {
          // 👍 
       }
-    }, [navigation])
+    }, [navigation])*/
 
     const recipeButton = (l: {id: string, label: string}) => {
       return (
@@ -154,6 +220,46 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
             <Divider />
         </View>
       )
+    }
+
+    const onClickSearch = () => {
+      setDocuments([]);
+      
+      (async () => {
+        await typesenseSearch(typesense, 'recipes', search, "title, ingredients", "").then((results) => {
+          if (results.length >= 0 ) {
+            let temp: DocumentType = [];
+            results.forEach((item: any) => {
+              console.log(item);
+              let id = item.document.document_id as string;
+              let title = item.document.title as string;
+              temp.push({id: id, label: title})
+            });
+  
+            setDocuments(temp);
+          }
+
+          if (results.length >= 0 ) {
+            console.log("No results")
+          }
+          
+        });
+
+        /*await multiSearch(typesense, {q: {}, field: "ingredients"}).then((results) => {
+          let temp: DocumentType = [];
+          console.log(results);
+          if (results.length >= 0 ) {
+            results.forEach((item: any) => {
+              console.log(item);
+              let id = item.document.document_id as string;
+              let title = item.document.title as string;
+              temp.push({id: id, label: title});
+            });
+          }
+  
+          setDocuments(temp);
+        });*/
+      })()
     }
 
   return (
@@ -197,7 +303,22 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
           />
 
           <Button
-            onPress={() => navigation.navigate('SearchRecipesScreen')}
+            onPress={() => onClickSearch()}
+            mode="text"
+            uppercase={false}
+            labelStyle = {recipeStyles.buttonlabel}
+          >
+            Search
+          </Button>
+
+          {
+              documents?.map((l, i) => (
+                recipeButton(l)
+              ))
+          }
+
+          <Button
+            onPress={() => navigation.navigate('SearchRecipesScreen', {typesense: typesense})}
             mode="text"
             uppercase={false}
             labelStyle = {recipeStyles.buttonlabel}

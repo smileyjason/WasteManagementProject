@@ -23,7 +23,7 @@
    CouponsScreen: undefined;
    SettingsScreen: undefined;
    HelpScreen: undefined;
-   SearchRecipesScreen: undefined;
+   SearchRecipesScreen: {typesense: any};
    RecipeScreen: {id: string};
  };
  
@@ -45,7 +45,7 @@
    SettingsScreen: undefined;
    HelpScreen: undefined;
    HomeTabScreen: undefined;
-   SearchRecipesScreen: undefined;
+   SearchRecipesScreen: {typesense: any};
    RecipeScreen: {id: string};
  };
  
