@@ -6,7 +6,10 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "create-typesense": "node typesense/createTypesenseServer.js",
+    "start-typesense": "node typesense/startTypesenseServer.js",
+    "stop-typesense": "node typesense/stopTypesenseServer.js"
   },
   "jest": {
     "preset": "jest-expo"
