@@ -7,9 +7,7 @@ import { RootTabScreenProps } from '../types';
 import { List, Searchbar, Button, Title, Checkbox, Card, Headline, Divider } from 'react-native-paper';
 import { collection, doc, getDoc, getDocs, query, where, updateDoc, orderBy, limit } from "firebase/firestore";
 import { app, db } from '../firebase';
-import { getAllRecipes } from '../hooks/getRecipes';
-import { typesenseSearch } from '../typesense/populateTypesense';
-import { RecipesSchema } from '../constants/Schemas';
+import { typesenseSearch} from '../typesense/typesense';
 
 export default function SearchRecipesScreen({ navigation, route }: RootTabScreenProps<'SearchRecipesScreen'>) {
   type DocumentType = {id: string, label: string}[];
