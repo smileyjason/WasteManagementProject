@@ -7,29 +7,15 @@ import { RootTabScreenProps } from '../types';
 import { Searchbar, Button } from 'react-native-paper';
 import { ScrollView } from 'react-native';
 import ScreenTitle from '../components/ScreenTitle';
-import { StyleSheet } from 'react-native';
+import RecipeStyles from '../styles/RecipeStyles';
 
 import { Card, Divider } from 'react-native-paper';
-import { collection, doc, getDoc, getDocs, query, where, updateDoc, orderBy, limit } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, where, updateDoc, orderBy, limit, addDoc } from "firebase/firestore";
 import { app, db } from '../firebase';
 import { getAllRecipes } from '../hooks/getRecipes';
 import { setTypesenseCollection, typesenseSearch} from '../typesense/typesense';
 import { RecipesSchema } from '../constants/Schemas';
-
-const recipeStyles = StyleSheet.create({
-  card: {
-    width: "80%", 
-    backgroundColor: '#C4C4C4',
-    marginBottom: '15px'
-  },
-  list: {
-    backgroundColor: '#C4C4C4',
-    marginTop: '5px',
-  },
-  buttonlabel: {
-    color: '#006400'
-  }
-});
+import { recipesData } from '../recipes';
 
 export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'RecipesTab'>) {
   const [search, setSearch] = React.useState("");
@@ -71,6 +57,7 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
 
     setDocuments(temp);*/
 
+
     const q_DailyMenu = query(collection(db, "recipes"), where("daily_menu", "==", true));
     temp = [];
     const querySnapshot_DailyMenu = await getDocs(q_DailyMenu);
@@ -100,20 +87,26 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
   }
 
   async function loadTypsenseCollection() {
-    let temp: {id: string, label: string}[] = [];
+    let temp: any[] = [];
 
-    /*const querySnapshot = await getDocs(collection(db, "recipes"));
-    querySnapshot.forEach((doc) => {
-      temp.push({id: doc.id, label: doc.data().title});
+    const querySnapshot1 = await getDocs(collection(db, "recipes"));
+    querySnapshot1.forEach((doc) => {
+      temp.push(doc.data());
     });
 
-    setDocuments(temp);*/
+    console.log(temp)
+
+    /*setDocuments(temp);*/
     let initialDocuments: {
       doc_num: number,
       document_id: string, 
       title: string,
       ingredients: string[],
       instructions: string,
+      meal_type: string[],
+      dietary_restrictions: string[],
+      cooking_style: string[],
+      cuisine: string
     }[] = [];
     const querySnapshot = await getDocs(collection(db, "recipes"));
     let index = 0;
@@ -125,6 +118,10 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
         title: data.title,
         ingredients: data.ingredients,
         instructions: data.instructions,
+        meal_type: data.meal_type,
+        cooking_style: data.cooking_style,
+        dietary_restrictions: data.dietary_restrictions,
+        cuisine: data.cuisine
       });
       index = index = 1;
     });
@@ -209,12 +206,12 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
 
     const recipeButton = (l: {id: string, label: string}) => {
       return (
-        <View style={recipeStyles.list}>
+        <View style={RecipeStyles.list}>
             <Button 
               mode="text" 
               uppercase={false} 
               onPress={() => navigation.navigate('RecipeScreen', {id: l.id as string})} 
-              labelStyle = {recipeStyles.buttonlabel}>
+              labelStyle = {RecipeStyles.buttonlabel}>
                 {l.label}
             </Button>
             <Divider />
@@ -273,7 +270,7 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
           helpMessage = "You can search for and keep track of recipes in the Recipes tab."/>
 
       {/* Daily Menu Card */}
-      <Card style={recipeStyles.card}>
+      <Card style={RecipeStyles.card}>
         <Card.Title
           title="My Daily Menu"
           subtitle="Based on the items in your fridge"
@@ -289,7 +286,7 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
       </Card>
 
       {/* Search Our Cookbook Card */}
-      <Card style={recipeStyles.card}>
+      <Card style={RecipeStyles.card}>
         <Card.Title
           title="Search Our Cookbook"
         />
@@ -306,7 +303,7 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
             onPress={() => onClickSearch()}
             mode="text"
             uppercase={false}
-            labelStyle = {recipeStyles.buttonlabel}
+            labelStyle = {RecipeStyles.buttonlabel}
           >
             Search
           </Button>
@@ -321,7 +318,7 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
             onPress={() => navigation.navigate('SearchRecipesScreen', {typesense: typesense})}
             mode="text"
             uppercase={false}
-            labelStyle = {recipeStyles.buttonlabel}
+            labelStyle = {RecipeStyles.buttonlabel}
           >
             Search using filters
           </Button>
@@ -329,7 +326,7 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
       </Card>
 
       {/* Bookmarks Card */}
-      <Card style={recipeStyles.card}>
+      <Card style={RecipeStyles.card}>
         <Card.Title
           title="Bookmarks"
         />
@@ -344,7 +341,7 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
       </Card>
 
       {/* Recent Card */}
-      <Card style={recipeStyles.card}>
+      <Card style={RecipeStyles.card}>
         <Card.Title
           title="Recent"
         />
