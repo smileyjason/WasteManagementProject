@@ -6,7 +6,9 @@ const PORT = 8108;
 const PWD = process.env.REACT_APP_PWD;
 const NAME = process.env.TYPESENSE_NAME;
 
-const command = `docker container start TypesenseWasteManagement`;
+const command = `docker run --name TypesenseWasteManagement -i -p ${PORT}:8108 -v/tmp/typesense-server-data-1b/:/data typesense/typesense:0.22.2 --data-dir /data --api-key=${API_KEY} --listen-port ${PORT} --enable-cors`
+
+//`docker container start TypesenseWasteManagement`;
 
 //`docker run --name TypesenseWasteManagement -d -p ${PORT}:8108 -v ${PWD}/typesense-server-data/:/data typesense/typesense:0.22.2 --data-dir /data --api-key=${API_KEY} --listen-port ${PORT}  --enable-cors`;
 

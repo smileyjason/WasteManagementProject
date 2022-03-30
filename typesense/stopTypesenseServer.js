@@ -3,7 +3,7 @@ require("dotenv").config();
 
 const NAME = process.env.TYPESENSE_NAME;
 
-const command = `docker stop TypesenseWasteManagement`;
+const command = `docker rm -f TypesenseWasteManagement`;
 /*`docker run -d -p ${PORT}:8108 -v\`pwd\`/typesense-server-data/:/data \
 typesense/typesense:0.22.2 --data-dir /data --api-key=${API_KEY} --listen-port ${PORT}  --enable-cors`;*/
 

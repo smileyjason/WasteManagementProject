@@ -42,26 +42,26 @@ export async function setTypesenseCollection (schema, documents) {
   let typesense = new Typesense.Client(TYPESENSE_CONFIG);
     try {
 
-      const collection = await typesense.collections("recipes").retrieve();
+      const collection = await typesense.collections("recipes");//.retrieve();
+      console.log(collection);
       console.log("Found exisitng collection of recipes");
-      console.log(JSON.stringify(collection, null, 2));
 
-      if ((await collection).num_documents !== documents.length) {
-        console.log("Collection has different number fo documents than data");
+      //if ((await collection).num_documents !== documents.length) {
+        //console.log("Collection has different number of documents than data");
         console.log("Deleting collection");
-        await typesense.collection("recipes").delete();
+        await typesense.collections("recipes").delete();
         typsensePopulated = false;
-      }
+      //}
 
 
     } catch (error) {
-      //console.log(error)
+      console.log(error)
     }
 
     if (!typsensePopulated) {
       try {
         console.log("Creating schema");
-        console.log(JSON.stringify(schema, null, 2));
+        //console.log(JSON.stringify(schema, null, 2));
   
         // create a collection
         await typesense.collections().create(schema);
@@ -75,7 +75,7 @@ export async function setTypesenseCollection (schema, documents) {
           })
         )
       } catch (error) {
-        //console.log(error)
+        console.log(error)
       }
     }
 

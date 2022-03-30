@@ -4,12 +4,13 @@ import styles from '../styles/ScreenStyles';
 import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
 
-import { doc, getDoc, getDocs } from "firebase/firestore";
+import { deleteDoc, doc, getDoc, getDocs } from "firebase/firestore";
 import { db } from '../firebase';
 import { useEffect, useState } from "react";
 import { collection, addDoc, updateDoc, serverTimestamp, deleteField   } from "firebase/firestore"; 
-import {jsonData} from '../recipes_raw_nosource_fn';
+import {recipesData} from '../recipes';
 import { Button } from 'react-native-paper';
+import { ScrollView } from 'react-native';
 
 export default function RecipeScreen( { navigation, route }: RootTabScreenProps<'RecipeScreen'>) {
 
@@ -37,23 +38,24 @@ export default function RecipeScreen( { navigation, route }: RootTabScreenProps<
         });
 
 
-        /*const querySnapshot = await getDocs(collection(db, "recipes"));
+        const querySnapshot = await getDocs(collection(db, "recipes"));
         querySnapshot.forEach((item) => {
+          //deleteDoc(doc(db, "recipes", item.id));
           const docRef = doc(db, "recipes", item.id);
-          updateDoc(docRef, {
-            daily_menu: false
-          });
-        });*/
+          if (item.data().cuisine === null) {
+            updateDoc(docRef, {
+              cuisine: ""
+            });
+          }
+          
+        });
 
 
         /*var count = 0;
-        for (const property in jsonData) {
-
-          import { db } from '../firebase';
-          import { collection, addDoc } from "firebase/firestore"; 
+        for (const property in recipesData) {
 
           try {
-            const docRef = await addDoc(collection(db, "recipes"), {...jsonData[property]});
+            const docRef = await addDoc(collection(db, "recipes"), {...recipesData[property]});
             console.log("Document written with ID: ", docRef.id);
           } catch (e) {
             console.error("Error adding document: ", e);
@@ -102,6 +104,7 @@ export default function RecipeScreen( { navigation, route }: RootTabScreenProps<
   //In the RecipesPageScreen, you just retrieve the titles of the recipe and send that to this when it is clicked on
   //Then in here, you retrieve all the recipe info from the database
   return (
+    <ScrollView>
     <View style={styles.container}>
       <Text style={styles.title}>{document.title}</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
@@ -131,5 +134,6 @@ export default function RecipeScreen( { navigation, route }: RootTabScreenProps<
 
       <Text style={styles.description}>{document.instructions}</Text>
     </View>
+    </ScrollView>
   );
 }
