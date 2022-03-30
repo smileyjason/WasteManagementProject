@@ -45,7 +45,6 @@ export async function setTypesenseCollection (schema, documents) {
       const collection = await typesense.collections("recipes");//.retrieve();
       console.log(collection);
       console.log("Found exisitng collection of recipes");
-      //console.log(JSON.stringify(collection, null, 2));
 
       //if ((await collection).num_documents !== documents.length) {
         //console.log("Collection has different number of documents than data");

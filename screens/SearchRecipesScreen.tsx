@@ -4,8 +4,7 @@ import styles from '../styles/ScreenStyles';
 import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
 
-import { List, Searchbar, Button, Title, Checkbox, Card, Headline, Divider, Caption, Paragraph } from 'react-native-paper';
-import { collection, doc, getDoc, getDocs, query, where, updateDoc, orderBy, limit } from "firebase/firestore";
+import { List, Searchbar, Button, Checkbox, Divider, Caption, Paragraph } from 'react-native-paper';
 import { app, db } from '../firebase';
 import { typesenseSearch} from '../typesense/typesense';
 
@@ -17,17 +16,13 @@ export default function SearchRecipesScreen({ navigation, route }: RootTabScreen
   const [searchIng, setSearchIng] = React.useState("");
   const [searchNoIng, setSearchNoIng] = React.useState("");
   const [results, setResults] = React.useState<{id: string, label: string}[]>();
-  //const [typesense, setTypesense] = React.useState<any>(null);
+  const [noResults, setNoResults] = React.useState(false);
 
   const handlePress = () => setExpanded(!expanded);
 
   const onChangeSearch = (searchValue: string) => setSearch(searchValue);
   const onChangeSearchIng = (searchValue: string) => setSearchIng(searchValue);
   const onChangeSearchNoIng = (searchValue: string) => setSearchNoIng(searchValue);
-
-  const ingredients = [
-    "Broccoli", "Asparagus", "Red Peppers", "Eggplant", "Cheese", "Chicken"
-  ];
 
   const mealTypes = [
     "Breakfast", "Lunch", "Dinner", "Dessert", "Snacks", "Appetizers", 
@@ -69,65 +64,15 @@ export default function SearchRecipesScreen({ navigation, route }: RootTabScreen
     )
   }
 
-  const onClickSearch = () => {
+  const onClickSearchAll = () => {
     setResults([]);
-    
-    (async () => {
-        await typesenseSearch(route.params.typesense, 'recipes', search, "title, ingredients", "").then((results) => {
-          if (results.length >= 0 ) {
-            let temp: DocumentType = [];
-            results.forEach((item: any) => {
-              console.log(item);
-              let id = item.document.document_id as string;
-              let title = item.document.title as string;
-              temp.push({id: id, label: title})
-            });
-  
-            setResults(temp);
-          }
 
-          if (results.length >= 0 ) {
-            console.log("No results")
-          }
-          
-        });
-    })()
-  }
+    const searchValue = (search === "" && searchNoIng === "")
+    ? "*" : search + "-" + searchNoIng.replaceAll(" ", "-");
 
-  const onSearchIngredients = () => {
-    setResults([]);
-    
-    (async () => {
+    const filterIng = searchIng === "" ? [] : [`ingredients:${searchIng}`];
 
-        const filterIng = `ingredients:${searchIng}`;
-        const filterNoIng = searchNoIng === "" ? "*" : "-" + searchNoIng.replaceAll(" ", "-");
-
-        await typesenseSearch(route.params.typesense, 'recipes', filterNoIng, "ingredients", filterIng).then((results) => {
-          let temp: DocumentType = [];
-          console.log(results);
-          if (results.length >= 0 ) {
-            results.forEach((item: any) => {
-              console.log(item);
-              let id = item.document.document_id as string;
-              let title = item.document.title as string;
-              temp.push({id: id, label: title});
-            });
-          }
-          if (results.length >= 0 ) {
-            console.log("No results")
-          }
-          setResults(temp);
-        });
-    })()
-  }
-
-  const onClickSearchOther = () => {
-    setResults([]);
-    
-    (async () => {
-      const query = search === "" ? "*" : search;
-
-      const filterListMeal: string[] = [];
+    const filterListMeal: string[] = [];
       mealTypes.forEach((item, index) => {
         if (checkedMeal[index]) {
           filterListMeal.push(`meal_type:${item}`);
@@ -156,31 +101,46 @@ export default function SearchRecipesScreen({ navigation, route }: RootTabScreen
       });
 
       const filter = [
+        ...filterIng,
         ...filterListMeal,
         ...filterListCookingStyle,
         ...filterListCuisine,
         ...filterListDietary
       ].join(' && ');
 
-      console.log(filter)
+      console.log(filter);
+    
+    (async () => {
+        await typesenseSearch(route.params.typesense, 'recipes', searchValue, "title, ingredients", filter).then((results) => {
 
-        await typesenseSearch(route.params.typesense, 'recipes', "*", "title", filter).then((results) => {
-          let temp: DocumentType = [];
-          console.log(results);
-          if (results.length >= 0 ) {
+          if (results.length > 0 ) {
+            let temp: DocumentType = [];
             results.forEach((item: any) => {
-              console.log(item);
               let id = item.document.document_id as string;
               let title = item.document.title as string;
-              temp.push({id: id, label: title});
+              temp.push({id: id, label: title})
             });
+  
+            setResults(temp);
+            setNoResults(false);
+          } else {
+            console.log("No results");
+            setNoResults(true);
+            setResults([]);
           }
-          if (results.length >= 0 ) {
-            console.log("No results")
-          }
-          setResults(temp);
+          
         });
     })()
+  }
+
+  const onClickClearAll = () => {
+    setSearch("");
+    setSearchIng("");
+    setSearchNoIng("");
+    setMealChecked(checkedMeal.map(() => {return false;}));
+    setCookingStyleChecked(checkedCookingStyle.map(() => {return false;}));
+    setCuisinesChecked(checkedCuisines.map(() => {return false;}));
+    setDietaryChecked(checkedDietary.map(() => {return false;}));
   }
 
 
@@ -215,13 +175,6 @@ export default function SearchRecipesScreen({ navigation, route }: RootTabScreen
             onChangeText={onChangeSearch}
             value={search}
           />
-          <Button
-            onPress={() => onClickSearch()}
-            mode="text"
-            uppercase={false}
-          >
-            Search
-          </Button>
         </List.Accordion>
 
         <List.Accordion title="Ingredients" id="1">
@@ -237,13 +190,6 @@ export default function SearchRecipesScreen({ navigation, route }: RootTabScreen
             onChangeText={onChangeSearchNoIng}
             value={searchNoIng}
           />
-          <Button
-            onPress={() => onSearchIngredients()}
-            mode="text"
-            uppercase={false}
-          >
-            Search
-          </Button>
         </List.Accordion>
         <List.Accordion title="Cuisines" id="2">
           { displayItems(cuisines, checkedCuisines, setCuisinesChecked) }
@@ -260,11 +206,19 @@ export default function SearchRecipesScreen({ navigation, route }: RootTabScreen
     </List.Section>
 
       <Button
-            onPress={() => onClickSearchOther()}
+            onPress={() => onClickSearchAll()}
             mode="text"
             uppercase={false}
           >
             Search
+      </Button>
+
+      <Button
+            onPress={() => onClickClearAll()}
+            mode="text"
+            uppercase={false}
+          >
+            Clear all
       </Button>
 
 
@@ -272,6 +226,9 @@ export default function SearchRecipesScreen({ navigation, route }: RootTabScreen
           results?.map((l, i) => (
              recipeButton(l)
           ))
+      }
+      {
+        noResults ? <Paragraph>No recipes match the search</Paragraph> : <></>
       }
     </React.Fragment>
 

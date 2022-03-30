@@ -221,42 +221,30 @@ export default function RecipesPageScreen({ navigation }: RootTabScreenProps<'Re
 
     const onClickSearch = () => {
       setDocuments([]);
-      
-      (async () => {
-        await typesenseSearch(typesense, 'recipes', search, "title, ingredients", "").then((results) => {
-          if (results.length >= 0 ) {
-            let temp: DocumentType = [];
-            results.forEach((item: any) => {
-              console.log(item);
-              let id = item.document.document_id as string;
-              let title = item.document.title as string;
-              temp.push({id: id, label: title})
-            });
-  
-            setDocuments(temp);
-          }
 
-          if (results.length >= 0 ) {
-            console.log("No results")
-          }
-          
-        });
 
-        /*await multiSearch(typesense, {q: {}, field: "ingredients"}).then((results) => {
-          let temp: DocumentType = [];
-          console.log(results);
-          if (results.length >= 0 ) {
-            results.forEach((item: any) => {
-              console.log(item);
-              let id = item.document.document_id as string;
-              let title = item.document.title as string;
-              temp.push({id: id, label: title});
-            });
-          }
-  
-          setDocuments(temp);
-        });*/
-      })()
+      if (search !== "") {
+
+        (async () => {
+          await typesenseSearch(typesense, 'recipes', search, "title, ingredients", "").then((results) => {
+            if (results.length > 0 ) {
+              let temp: DocumentType = [];
+              results.forEach((item: any) => {
+                let id = item.document.document_id as string;
+                let title = item.document.title as string;
+                temp.push({id: id, label: title})
+              });
+    
+              setDocuments(temp);
+            } else {
+              setDocuments([]);
+            }
+            
+          });
+        })()
+      } else {
+        setDocuments([]);
+      }
     }
 
   return (
