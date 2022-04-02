@@ -24,6 +24,7 @@ const fridgeStyles = StyleSheet.create({
 });
 
 export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeScreen'>) {
+  // react variables
   const [visibleFridge, setVisibleFridge] = React.useState(false);
   const [visibleGrocery, setVisibleGrocery] = React.useState(false);
 
@@ -35,11 +36,13 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
   const [name, setName] = React.useState("");
   const [date, setDate] = React.useState("");
   const [amount, setAmount] = React.useState("");
+  const [fridge, setFridge] = React.useState<{ id: string, label: string, amount: string }[]>();
+  const [groceries, setGroceries] = React.useState<{ id: string, label: string, amount: string }[]>();
   const [newInFridge, setNewInFridge] = React.useState(0);
   const [newInGrocery, setNewInGrocery] = React.useState(0);
   const containerStyle = { alignItems: 'center' };
 
-
+  // add input ingredients to fridge and database
   function addIngredientFridge() {
     const IngredientData = {
       name: name,
@@ -51,27 +54,24 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
       name: name,
       date: date,
       amount: amount
-    });
-    setNewInFridge(newInFridge + 1);
-    {/* modify list and add to database*/ }
+    }).then(r => {});
+    setNewInFridge(newInFridge + 1); // modify list and add to database
+
   }
 
-
+  // add input ingredients to grocery list and database
   function addIngredientGrocery() {
     const GroceryData = {
       name: name,
       amount: amount
     }
-    console.log(GroceryData); {/* modify list and add to database*/ }
+    console.log(GroceryData); // modify list and add to database
     addDoc(collection(db, "groceries"), {
       name: name,
       amount: amount
     });
     setNewInGrocery(newInGrocery + 1);
   }
-
-
-  const [fridge, setFridge] = React.useState<{ id: string, label: string, amount: string }[]>();
 
   React.useEffect(() => {
     (async () => {
@@ -89,13 +89,11 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
     })()
 
     return () => {
-      // 👍 
+      // 👍
     }
   }, [newInFridge])
 
   console.log(fridge);
-
-  const [groceries, setGroceries] = React.useState<{ id: string, label: string, amount: string }[]>();
 
   React.useEffect(() => {
     (async () => {
@@ -113,7 +111,7 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
     })()
 
     return () => {
-      // 👍 
+      // 👍
     }
   }, [newInGrocery])
 
@@ -133,18 +131,21 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
               label="Ingredient"
               value={name}
               onChangeText={name => setName(name)}
+              autoComplete = "off"
             />
             <TextInput
               label="Date (dd/mm/yyyy)"
               value={date}
               onChangeText={date => setDate(date)}
+              autoComplete = "off"
             />
             <TextInput
               label="Amount"
               value={amount}
               onChangeText={amount => setAmount(amount)}
+              autoComplete = "off"
             />
-            <Button icon="plus" mode="contained" onPress={addIngredientFridge} color='#90EE90'>
+            <Button icon="plus" mode="contained" onPress={()=> {addIngredientFridge() , setName('') , setAmount('') , setDate('')}} color='#90EE90'>
               Add Ingredient to Fridge
             </Button>
           </Card>
@@ -160,13 +161,15 @@ export default function FridgeScreen({ navigation }: RootTabScreenProps<'FridgeS
               label="Ingredient"
               value={name}
               onChangeText={name => setName(name)}
+              autoComplete = "off"
             />
             <TextInput
               label="Amount"
               value={amount}
               onChangeText={amount => setAmount(amount)}
+              autoComplete = "off"
             />
-            <Button icon="plus" mode="contained" onPress={addIngredientGrocery} color='#90EE90'>
+            <Button icon="plus" mode="contained" onPress={()=> {addIngredientGrocery() , setAmount(''), setName('')}} color='#90EE90'>
               Add Ingredient to Grocery List
             </Button>
           </Card>
