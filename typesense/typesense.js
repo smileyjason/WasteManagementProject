@@ -42,14 +42,14 @@ export async function setTypesenseCollection (schema, documents) {
   let typesense = new Typesense.Client(TYPESENSE_CONFIG);
     try {
 
-      const collection = await typesense.collections("recipes");//.retrieve();
+      const collection = await typesense.collections("recipes");
       console.log(collection);
       console.log("Found exisitng collection of recipes");
 
       //if ((await collection).num_documents !== documents.length) {
         //console.log("Collection has different number of documents than data");
         console.log("Deleting collection");
-        await typesense.collections("recipes").delete();
+        typesense.collections("recipes").delete(); // removed await as a temp fix
         typsensePopulated = false;
       //}
 
@@ -64,7 +64,7 @@ export async function setTypesenseCollection (schema, documents) {
         //console.log(JSON.stringify(schema, null, 2));
   
         // create a collection
-        await typesense.collections().create(schema);
+        typesense.collections().create(schema); // removed await as a temp fix
   
         console.log("Populating collection...");
       
